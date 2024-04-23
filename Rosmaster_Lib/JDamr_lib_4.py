@@ -8,6 +8,7 @@ Description
 - This script has protocol define, parsing, receiving paket 
   - example: encoder 
   - car motion
+  - encoder periodic read 
 - Next script to do 
   - IMU - raw sensor value, pitch/roll/yaw, speed 
   - auto report 
@@ -23,8 +24,12 @@ class JDamr(object):
         self.CMD_SET_MOTOR = 0x01
         self.CMD_GET_SPEED = 0x02
         self.CMD_GET_ENCODER = 0x03
-
         self.CMD_CAR_RUN = 0x04
+
+        self.encoder1 = 0
+        self.encoder2 = 0
+        self.encoder3 = 0
+        self.encoder4 = 0
 
         if self.ser.isOpen():
             print("JDamr serial port opened!")
@@ -67,10 +72,19 @@ class JDamr(object):
 
     def parse_cmd(self, payload):
         if self.CMD_GET_ENCODER == payload[0]:
+            print(payload)
             encode1_str = payload[1:5]
-            print(encode1_str)
-            encode1 = int.from_bytes(encode1_str, "little")
-            print(encode1)
+            encode2_str = payload[5:9]
+            encode3_str = payload[9:13]
+            encode4_str = payload[13:17]
+            self.encode1 = int.from_bytes(encode1_str, byteorder="big")
+            print(self.encode1)
+            self.encode2 = int.from_bytes(encode2_str, byteorder="big")
+            print(self.encode2)
+            self.encode3 = int.from_bytes(encode3_str, byteorder="big")
+            print(self.encode3)
+            self.encode4 = int.from_bytes(encode4_str, byteorder="big")
+            print(self.encode4)
 
     def set_motor(self, speed_1, speed_2, speed_3, speed_4):
         try:
